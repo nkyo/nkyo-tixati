@@ -1,12 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
     <head>
-        <link rel="icon" type="image/png" href="/favico.png" />
         <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+
         <title>Tixati v$strver$ Web Interface</title>
+
+        <link rel="icon" type="image/png" href="/favico.png" />
+
+        <link rel="stylesheet" type="text/css" href="custom.css" />
         <link rel="stylesheet" type="text/css" href="main.css" />
         <link rel="stylesheet" type="text/css" href="semantic.min.css" />
         <link rel="stylesheet" type="text/css" href="icon.css" />
+
         <script type="application/javascript" src="/jquery.min.js"></script>
         <script type="application/javascript" src="/semantic.min.js"></script>
     </head>
@@ -34,7 +39,7 @@
 
         <br />
 
-        <div class="titlehdr">
+        <div class="titlehdr textColor">
             Add Transfer
         </div>
 
@@ -48,7 +53,9 @@
                 class="ui form"
             >
                 <div class="field">
-                    <label>Magnet link or HTTP link to .torrent file</label>
+                    <label class="textColor"
+                        >Magnet link or HTTP link to .torrent file</label
+                    >
                     <input
                         title=""
                         type="text"
@@ -65,7 +72,9 @@
                             name="noautostart"
                             value="1"
                         />
-                        <label>Stop before file allocation</label>
+                        <label class="textColor"
+                            >Stop before file allocation</label
+                        >
                     </div>
                 </div>
                 <div class="field center aligned">
@@ -81,7 +90,7 @@
 
             <br /><br />
 
-            <label>Upload a .torrent file</label>
+            <label class="textColor">Upload a .torrent file</label>
             <form
                 method="post"
                 action="/transfers/action"
@@ -106,7 +115,9 @@
                 <div class="field">
                     <div class="ui toggle checkbox">
                         <input type="checkbox" name="noautostart" value="1" />
-                        <label>Stop before file allocation</label>
+                        <label class="textColor"
+                            >Stop before file allocation</label
+                        >
                     </div>
                 </div>
                 <input
