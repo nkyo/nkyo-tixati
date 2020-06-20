@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+
+<head>
+
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+
+    <title>Transfers - Tixati Web Interface</title>
+    <link rel="icon" type="image/png" href="/favico.png">
+
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <link rel="stylesheet" type="text/css" href="semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="icon.css">
+
+    <style>
+            .transfer-button {
+                width: 100%;
+                height: 100%;
+            }
+    </style>
+
+    <script type="application/javascript" src="/jquery.min.js"></script>
+    <script type="application/javascript" src="/jquery.tablesort.min.js"></script>
+    <script type="application/javascript" src="/semantic.min.js"></script>
+
+    <script type="text/javascript">
+
+        function viewtrans(tran) {
+            var transfer = tran;
+            window.location.href = "/transfers/" + transfer + "/details";
+        }
+
+        function stoptrans(tran, status) {
+            var transfer = tran;
+            var transferCurrentStatus = status;
+            console.log(transfer,transferCurrentStatus);
+
+            if (transferCurrentStatus == 'Complete - Offline') {
+                viewtrans(transfer);
+                
+                //document.body.innerHTML += '<form method="post" id="dynForm" action="/transfers/'+ transfer +'/details/action"><input type="hidden" name="start" value="Start"></form>';
+                //document.getElementById("dynForm").submit();
+            }
+            else {
+                document.body.innerHTML += '<form method="post" id="dynForm" action="/transfers/'+ transfer +'/details/action"><input type="hidden" name="stop" value="Stop"></form>';
+                document.getElementById("dynForm").submit();
+            }
+        }
+
+    </script>
+
+</head>
+
+<script>
+    <!--
+    function udctrls() {
+        var inputs = document.getElementsByClassName("selection");
+        var sel = 0;
+        for (var i = inputs.length - 1; i >= 0; i--) {
+            if (inputs[i].checked) sel = 1;
+        }
+        var btns = document.getElementsByClassName("selctrl");
+        for (var i = btns.length - 1; i >= 0; i--) {
+            if (sel) btns[i].disabled = false;
+            else btns[i].disabled = true;
+        }   
+    }
+    //
+    -->
+</script>
+
+<body onload="udctrls()">
+
+    <div class="ui six item menu">
+        <a class="item" href="/home"><i class="large home icon"></i> Home</a>
+        <a class="active item" href="/transfers"><i class="large download icon"></i> Transfers</a>
+        <a class="item" href="/bandwidth"><i class="large bar chart icon"></i> Bandwidth</a>
+        <a class="item" href="/dht"><i class="large lightning icon"></i> DHT</a>
+        <a class="item" href="/settings"><i class="large settings icon"></i> Settings</a>
+        <a class="item" href="/help"><i class="large help icon"></i> Help</a>
+    </div>
+
+    <br />
+
+    <form method="post" action="/transfers/action" enctype="multipart/form-data" class="ui form">
+
+        <div class="ui two column grid">
+            <div class="row">
+                <div class="one wide column">
+                </div>
+                <div class="twelve wide column">
+                    <input title="" placeholder="Magnet link or HTTP link to .torrent file" type="text" name="addlinktext" size=70 /><br/>
+                </div>
+                <div class="two wide column">
+                    <input class="ui positive fluid button" title="Add" type="submit" name="addlink" Value="Add"/>&nbsp;
+                </div>
+                <div class="one wide column">
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+    <form method="post" action="/transfers/action" enctype="multipart/form-data" class="ui form">
+
+        <!--if filterenabled-->
+        <table class="xfersctrls ui celled table">
+            <tr>
+                <td style="white-space:nowrap;">Filter&nbsp;<input type="checkbox" name="xferfilter_on" value="1"
+                        $chk_xfers_filter$ /></td>
+                <td><input type="text" name="xferfilter_text" size=40 value="$xferfilter_text$" /></td>
+                <td><input type="submit" name="xferfilter_clear" value="Clear" /></td>
+                <td>
+                    <select name="xferfilter_mode">
+                        <!--select xferfilter_mode-->
+                    </select>
+                </td>
+                <td><input type="submit" name="xferfilter_apply" value="Apply" /></td>
+            </tr>
+        </table>
+        <!--endif-->
+
+        <table class="ui selectable sortable celled table" id="torrents-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th class="no-sort">Bytes</th>
+                    <th class="number">&#37;</th>
+                    <th>Status</th>
+                    <th class="bytes">B/s In</th>
+                    <th class="bytes">B/s Out</th>
+                    <th>Priority</th>
+                    <th>Time Left</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--list_start transfers-->
+                <tr class="$statusclass_alt$" onclick="viewtrans('$guid$')"
+                    class="transfer-button">
+                    <td><a href="/transfers/$guid$/details">$name$</a></td>
+                    <td>$bytes$</td>
+                    <td>$progress$</td>
+                    <td>$status$</td>
+                    <td>$bps_in$</td>
+                    <td>$bps_out$</td>
+                    <td>$priority$</td>
+                    <td>$timeleft$</td>
+                </tr>
+            </tbody>
+            <!--list_end-->
+        </table>
+
+        <div class="ui one buttons menu">
+
+            <input type="submit" name="addtransfer" Value="Add Custom Transfer" class="ui button" />
+
+        </div>
+
+    </form>
+
+    <br />
+    <script type="application/javascript">
+        $(document).ready(function () {
+            $('#torrents-table').tablesort();
+
+            $('#torrents-table > thead > tr > th.bytes').data('sortBy', function (th, td, tablesort) {
+
+                if (td.text().indexOf(" K") > -1) {
+                    var entry = td.text().replace(" K", "").replace(",", "");
+                    var result = parseFloat(entry) * 1024;
+                } else if (td.text().indexOf(" M") > -1) {
+                    var entry = td.text().replace(" M", "").replace(",", "");
+                    var result = parseFloat(entry) * 1048576;
+                } else {
+                    result = parseFloat(td.text());
+                }
+                if (isNaN(result)) {
+                    result = -1;
+                }
+                return result;
+            });
+
+            $('#torrents-table > thead > tr > th.number').data('sortBy', function (th, td, tablesort) {
+                return parseFloat(td.text()) * 10;
+            });
+            window.setInterval(function () {
+                $('#torrents-table').load(document.URL + ' #torrents-table');
+            }, 2500);
+
+        });
+    </script>
+</body>
+
+</html>
